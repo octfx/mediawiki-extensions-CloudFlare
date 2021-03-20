@@ -27,33 +27,30 @@ class HookUtils {
 		$accountId = $config->get( 'CloudFlareAccountId' );
 
 		// Return if any info is missing
-		if ( empty( $zoneId ) || empty( $apiToken ) || empty( $accountId ) ) {
+		if ( empty( $zoneId ) || empty( $apiToken ) || empty( $accountId ) || empty( $urls ) ) {
 			return;
 		}
 
-		$fac = MediaWikiServices::getInstance()->getHttpRequestFactory();
-		$req = $fac->create( sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/purge_cache', $zoneId ) );
-		$req->setHeader( 'X-Auth-Key', $accountId );
-		$req->setHeader( 'Authorization', sprintf( 'Bearer %s', $apiToken ) );
-		$req->setHeader( 'Content-Type', 'application/json' );
+		$str = implode( "\", \"", $urls );
+		$str = "{\"files\":[\"$str\"]}";
 
-		$req->setData( [
-			'files' => $urls
-		] );
+		$ch = curl_init();
 
-		$status = Status::newGood();
-		try {
-			$status = $req->execute();
-		} catch ( MWException $e ) {
-			wfLogWarning( sprintf( 'Could not purge CloudFlare URLS. Error: %s', $e->getMessage() ) );
-			return;
-		} finally {
-			if ( !$status->isOK() ) {
-				wfLogWarning(
-					sprintf( 'Could not purge CloudFlare URLS. Error: %s', json_encode( $status->getErrors() ) )
-				);
-				return;
-			}
+		curl_setopt( $ch, CURLOPT_URL, "https://api.cloudflare.com/client/v4/zones/$zoneId/purge_cache" );
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+		curl_setopt( $ch, CURLOPT_POST, 1 );
+		curl_setopt( $ch, CURLOPT_POSTFIELDS, $str );
+
+		$headers = [];
+		$headers[] = "X-Auth-Key: $accountId";
+		$headers[] = "Authorization: Bearer $apiToken";
+		$headers[] = "Content-Type: application/json";
+
+		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
+		$result = curl_exec( $ch );
+		if ( curl_errno( $ch ) ) {
+			echo 'Error: ' . curl_error( $ch );
 		}
+		curl_close( $ch );
 	}
 }
