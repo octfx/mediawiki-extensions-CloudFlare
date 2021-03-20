@@ -11,6 +11,7 @@ declare( strict_types=1 );
 
 namespace MediaWiki\Extension\CloudFlare\Hooks;
 
+use File;
 use MediaWiki\Hook\LocalFilePurgeThumbnailsHook;
 use MediaWiki\Hook\TitleSquidURLsHook;
 
@@ -26,9 +27,12 @@ class PurgeHooks implements
 	 *
 	 * @param File $file The File of which the thumbnails are being purged
 	 * @param string $archiveName Name of an old file version or false if it's the current one
-	 * @param array $urls Urls to be purged
 	 */
-	public function onLocalFilePurgeThumbnails( $file, $archiveName, $urls ) {
+	public function onLocalFilePurgeThumbnails( $file, $archiveName ) {
+		$urls = [];
+		foreach ( $files as $file ) {
+			$urls = File::getThumbUrl( $file )
+		}
 		if ( $urls ) {
 			HookUtils::purgeUrls( $urls );
 		}
