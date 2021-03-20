@@ -10,6 +10,8 @@
 namespace MediaWiki\Extension\CloudFlare\Hooks;
 
 use MediaWiki\MediaWikiServices;
+use MWException;
+use Status;
 
 class HookUtils {
 
@@ -18,7 +20,7 @@ class HookUtils {
 	 * Based on Extension:CloudflarePurge by Alex Lee
 	 * @param array $urls URLs to purge
 	 */
-	public function purgeUrls( $urls ) {
+	public function purgeUrls( $urls ): void {
 		$config = MediaWikiServices::getInstance()->getMainConfig();
 		$zoneId = $config->get( 'CloudFlareZoneId' );
 		$apiToken = $config->get( 'CloudFlareApiToken' );
@@ -29,27 +31,27 @@ class HookUtils {
 			return;
 		}
 
-		$str = implode( "\", \"", $urls );
-		$str = "{\"files\":[\"$str\"]}";
+		$fac = MediaWikiServices::getInstance()->getHttpRequestFactory();
+		$req = $fac->create( sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/purge_cache', $zoneId ) );
+		$req->setHeader( 'X-Auth-Key', $accountId );
+		$req->setHeader( 'Authorization', sprintf( 'Bearer %s', $apiToken ) );
+		$req->setHeader( 'Content-Type', 'application/json' );
 
-		$ch = curl_init();
+		$req->setData( [
+			'files' => $urls
+		] );
 
-		curl_setopt( $ch, CURLOPT_URL, "https://api.cloudflare.com/client/v4/zones/$zoneId/purge_cache" );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-		curl_setopt( $ch, CURLOPT_POST, 1 );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, $str );
-
-		$headers = [];
-		$headers[] = "X-Auth-Key: $accountId";
-		$headers[] = "Authorization: Bearer $apiToken";
-		$headers[] = "Content-Type: application/json";
-
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
-		$result = curl_exec( $ch );
-		if ( curl_errno( $ch ) ) {
-			echo 'Error: ' . curl_error( $ch );
+		$status = Status::newGood();
+		try {
+			$status = $req->execute();
+		} catch ( MWException $e ) {
+			wfLogWarning( sprintf( 'Could not purge CloudFlare URLS. Error: %s', $e->getMessage() ) );
+			return;
+		} finally {
+			if ( !$status->isOK() ) {
+				wfLogWarning( sprintf( 'Could not purge CloudFlare URLS. Error: %s', json_encode( $status->getErrors() ) ) );
+				return;
+			}
 		}
-
-		curl_close( $ch );
 	}
 }
