@@ -49,12 +49,12 @@ class HookUtils {
 			return;
 		} finally {
 			if ( !$status->isOK() ) {
-				wfLogWarning( 
-					sprintf( 
+				wfLogWarning(
+					sprintf(
 						'Could not purge CloudFlare URLS. Error: %s',
-						json_encode( $status->getErrors() ) 
-					) 
-				);
+						json_encode( $status->getErrors() )
+ )
+ );
 				return;
 			}
 		}
