@@ -29,21 +29,22 @@ class HookUtils {
 			return;
 		}
 
-		$str = json_encode( [ 'files' => $urls ] );
-
-		$ch = curl_init();
-
-		curl_setopt( $ch, CURLOPT_URL, "https://api.cloudflare.com/client/v4/zones/$zoneId/purge_cache" );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-		curl_setopt( $ch, CURLOPT_POST, 1 );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, $str );
-
 		$headers = [];
 		$headers[] = "X-Auth-Key: $accountId";
 		$headers[] = "Authorization: Bearer $apiToken";
 		$headers[] = "Content-Type: application/json";
 
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
+		$options = array(
+			CURLOPT_URL => "https://api.cloudflare.com/client/v4/zones/$zoneId/purge_cache",
+			CURLOPT_RETURNTRANSFER => 1,
+			CURLOPT_POST => 1,
+			CURLOPT_POSTFIELDS => json_encode( [ 'files' => $urls ] );
+			CURLOPT_HTTPHEADER => $headers,
+		);
+
+		$ch = curl_init();
+		curl_setopt_array( $ch, $options );
+
 		$result = curl_exec( $ch );
 		if ( curl_errno( $ch ) ) {
 			echo 'Error: ' . curl_error( $ch );
