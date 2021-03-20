@@ -29,10 +29,8 @@ class PurgeHooks implements
 	 * @param string $archiveName Name of an old file version or false if it's the current one
 	 */
 	public function onLocalFilePurgeThumbnails( $file, $archiveName ) {
-		$urls = [];
-		foreach ( $files as $file ) {
-			$urls = File::getThumbUrl( $file )
-		}
+		$urls = File::getThumbUrl( $file );
+		
 		if ( $urls ) {
 			HookUtils::purgeUrls( $urls );
 		}
