@@ -5,7 +5,9 @@
 	"type": "other",
 	"url": "https://www.mediawiki.org/wiki/Extension:CloudFlare",
 	"author": [
-		"alistair3149"
+		"[https://www.mediawiki.org/wiki/User:Alistair3149 Alistair3149]",
+		"[https://www.mediawiki.org/wiki/User:Octfx Octfx]",
+		"..."
 	],
 	"namemsg": "cloudflare",
 	"descriptionmsg": "cloudflare-desc",
