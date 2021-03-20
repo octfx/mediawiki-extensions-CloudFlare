@@ -29,8 +29,7 @@ class HookUtils {
 			return;
 		}
 
-		$str = implode( "\", \"", $urls );
-		$str = "{\"files\":[\"$str\"]}";
+		$str = json_encode( [ 'files' => $urls ] );
 
 		$ch = curl_init();
 
