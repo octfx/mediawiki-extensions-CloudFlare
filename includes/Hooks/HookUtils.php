@@ -27,15 +27,15 @@ class HookUtils {
 		$accountId = $config->get( 'CloudFlareAccountId' );
 
 		// Return if any info is missing
-		if ( empty( $zoneId ) || empty( $apiToken ) || empty( $accountId ) ) {
+		if ( empty( $zoneId ) || empty( $apiToken ) || empty( $accountId ) || empty( $urls ) ) {
 			return;
 		}
 
 		$fac = MediaWikiServices::getInstance()->getHttpRequestFactory();
 		$req = $fac->create( sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/purge_cache', $zoneId ) );
-		$req->setHeader( 'X-Auth-Key', $accountId );
-		$req->setHeader( 'Authorization', sprintf( 'Bearer %s', $apiToken ) );
-		$req->setHeader( 'Content-Type', 'application/json' );
+		$req->setHeader( strtolower( 'X-Auth-Key' ), $accountId );
+		$req->setHeader( strtolower( 'Authorization' ), sprintf( 'Bearer %s', $apiToken ) );
+		$req->setHeader( strtolower( 'Content-Type' ), 'application/json' );
 
 		$req->setData( [
 			'files' => $urls
