@@ -10,8 +10,6 @@
 namespace MediaWiki\Extension\CloudFlare\Hooks;
 
 use MediaWiki\MediaWikiServices;
-use MWException;
-use Status;
 
 class HookUtils {
 
