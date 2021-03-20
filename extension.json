@@ -1,7 +1,7 @@
 {
 	"name": "CloudFlare",
 	"license-name": "GPL-3.0-or-later",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"type": "other",
 	"url": "https://www.mediawiki.org/wiki/Extension:CloudFlare",
 	"author": [
