@@ -14,7 +14,10 @@ namespace MediaWiki\Extension\CloudFlare\Hooks;
 use MediaWiki\Hook\LocalFilePurgeThumbnailsHook;
 use MediaWiki\Hook\TitleSquidURLsHook;
 
-class PurgeHooks implements TitleSquidURLsHook {
+class PurgeHooks implements
+	LocalFilePurgeThumbnailsHook,
+	TitleSquidURLsHook 
+{
 
 	/**
 	 * Retrieve a list of thumbnail URLs that needs to be purged
