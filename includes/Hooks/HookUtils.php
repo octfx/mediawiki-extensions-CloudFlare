@@ -16,38 +16,38 @@ class HookUtils {
 	 * Based on Extension:CloudflarePurge by Alex Lee
 	 * @param array $urls URLs to purge
 	 */
-	public function purgeUrls( $urls ){
+	public function purgeUrls( $urls ) {
 		$config = MediaWikiServices::getInstance()->getMainConfig();
-		$zoneId = $config->get('CloudFlareZoneId');
-		$apiToken = $config->get('CloudFlareApiToken');
-		$accountId = $config->get('CloudFlareAccountId');
+		$zoneId = $config->get( 'CloudFlareZoneId' );
+		$apiToken = $config->get( 'CloudFlareApiToken' );
+		$accountId = $config->get( 'CloudFlareAccountId' );
 
 		// Return if any info is missing
-		if( empty( $zoneId ) || empty( $apiToken ) || empty( $accountId ) ) {
+		if ( empty( $zoneId ) || empty( $apiToken ) || empty( $accountId ) ) {
 			return;
 		}
 
-		$str = implode("\", \"", $urls);
+		$str = implode( "\", \"", $urls );
 		$str = "{\"files\":[\"$str\"]}";
-		
+
 		$ch = curl_init();
 
-		curl_setopt($ch, CURLOPT_URL, "https://api.cloudflare.com/client/v4/zones/$zoneId/purge_cache");
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $str);
+		curl_setopt( $ch, CURLOPT_URL, "https://api.cloudflare.com/client/v4/zones/$zoneId/purge_cache" );
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+		curl_setopt( $ch, CURLOPT_POST, 1 );
+		curl_setopt( $ch, CURLOPT_POSTFIELDS, $str );
 
-		$headers = array();
+		$headers = [];
 		$headers[] = "X-Auth-Key: $accountId";
 		$headers[] = "Authorization: Bearer $apiToken";
 		$headers[] = "Content-Type: application/json";
 
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		$result = curl_exec($ch);
-		if(curl_errno($ch)){
-			echo 'Error: ' . curl_error($ch);
+		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
+		$result = curl_exec( $ch );
+		if ( curl_errno( $ch ) ) {
+			echo 'Error: ' . curl_error( $ch );
 		}
 
-		curl_close($ch);
+		curl_close( $ch );
 	}
 }

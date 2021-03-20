@@ -20,11 +20,11 @@ class PurgeHooks implements TitleSquidURLsHook {
 	 *
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/TitleSquidURLs
 	 *
-	 * @param Title	$title	Title object to purge
-	 * @param string[]	&$urls	Array of URLs to purge from the caches, to be manipulated
+	 * @param Title $title Title object to purge
+	 * @param string[] &$urls Array of URLs to purge from the caches, to be manipulated
 	 */
 	public function onTitleSquidURLs( $title, &$urls ) {
-		if( $urls ) {
+		if ( $urls ) {
 			HookUtils::purgeUrls( $urls );
 		}
 	}
