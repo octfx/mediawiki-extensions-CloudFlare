@@ -16,7 +16,7 @@ use MediaWiki\Hook\TitleSquidURLsHook;
 
 class PurgeHooks implements
 	LocalFilePurgeThumbnailsHook,
-	TitleSquidURLsHook 
+	TitleSquidURLsHook
 {
 
 	/**
