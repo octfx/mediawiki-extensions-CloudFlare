@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"alistair3149"
+		]
+	},
+	"cloudflare": "CloudFlare",
+	"cloudflare-desc": "Adds intergration with CloudFlare such as purge request"
+}

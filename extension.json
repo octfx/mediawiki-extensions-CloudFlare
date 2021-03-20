@@ -1,0 +1,46 @@
+{
+	"name": "CloudFlare",
+	"license-name": "GPL-3.0-or-later",
+	"version": "0.0.1",
+	"type": "other",
+	"url": "https://www.mediawiki.org/wiki/Extension:CloudFlare",
+	"author": [
+		"alistair3149"
+	],
+	"namemsg": "cloudflare",
+	"descriptionmsg": "cloudflare-desc",
+	"requires": {
+		"MediaWiki": ">= 1.35.0"
+	},
+	"MessagesDirs": {
+		"CloudFlare": [
+			"i18n"
+		]
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\CloudFlare\\": "includes/"
+	},
+	"Hooks": {
+		"TitleSquidURLs": "purge"
+	},
+	"HookHandlers": {
+		"purge": {
+			"class": "MediaWiki\\Extension\\CloudFlare\\Hooks\\PurgeHooks"
+		}
+	},
+	"config": {
+		"CloudFlareZoneId": {
+			"value": null
+		},
+		"CloudFlareApiToken": {
+			"value": null
+		},
+		"CloudFlareAccountId": {
+			"value": null
+		}
+	},
+	"ConfigRegistry": {
+		"cloudflare": "GlobalVarConfig::newInstance"
+	},
+	"manifest_version": 2
+}
