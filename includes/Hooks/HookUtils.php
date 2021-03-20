@@ -38,7 +38,7 @@ class HookUtils {
 			CURLOPT_URL => "https://api.cloudflare.com/client/v4/zones/$zoneId/purge_cache",
 			CURLOPT_RETURNTRANSFER => 1,
 			CURLOPT_POST => 1,
-			CURLOPT_POSTFIELDS => json_encode( [ 'files' => $urls ] );
+			CURLOPT_POSTFIELDS => json_encode( [ 'files' => $urls ] ),
 			CURLOPT_HTTPHEADER => $headers,
 		);
 
