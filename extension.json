@@ -21,6 +21,7 @@
 		"MediaWiki\\Extension\\CloudFlare\\": "includes/"
 	},
 	"Hooks": {
+		"LocalFilePurgeThumbnails": "purge",
 		"TitleSquidURLs": "purge"
 	},
 	"HookHandlers": {
