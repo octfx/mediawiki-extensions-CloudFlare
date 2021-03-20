@@ -9,6 +9,8 @@
 
 namespace MediaWiki\Extension\CloudFlare\Hooks;
 
+use MediaWiki\MediaWikiServices;
+
 class HookUtils {
 
 	/**
