@@ -10,8 +10,6 @@
 namespace MediaWiki\Extension\CloudFlare\Hooks;
 
 use MediaWiki\MediaWikiServices;
-use MWException;
-use Status;
 
 class HookUtils {
 
@@ -31,27 +29,26 @@ class HookUtils {
 			return;
 		}
 
-		$fac = MediaWikiServices::getInstance()->getHttpRequestFactory();
-		$req = $fac->create( sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/purge_cache', $zoneId ) );
-		$req->setHeader( strtolower( 'X-Auth-Key' ), $accountId );
-		$req->setHeader( strtolower( 'Authorization' ), sprintf( 'Bearer %s', $apiToken ) );
-		$req->setHeader( strtolower( 'Content-Type' ), 'application/json' );
+		$headers = [];
+		$headers[] = "X-Auth-Key: $accountId";
+		$headers[] = "Authorization: Bearer $apiToken";
+		$headers[] = "Content-Type: application/json";
 
-		$req->setData( [
-			'files' => $urls
-		] );
+		$options = [
+			CURLOPT_URL => "https://api.cloudflare.com/client/v4/zones/$zoneId/purge_cache",
+			CURLOPT_RETURNTRANSFER => 1,
+			CURLOPT_POST => 1,
+			CURLOPT_POSTFIELDS => json_encode( [ 'files' => $urls ] ),
+			CURLOPT_HTTPHEADER => $headers,
+		];
 
-		$status = Status::newGood();
-		try {
-			$status = $req->execute();
-		} catch ( MWException $e ) {
-			wfLogWarning( sprintf( 'Could not purge CloudFlare URLS. Error: %s', $e->getMessage() ) );
-			return;
-		} finally {
-			if ( !$status->isOK() ) {
-				wfLogWarning( sprintf( 'Could not purge CloudFlare URLS. Error: %s', json_encode( $status->getErrors() ) ) );
-				return;
-			}
+		$ch = curl_init();
+		curl_setopt_array( $ch, $options );
+
+		$result = curl_exec( $ch );
+		if ( curl_errno( $ch ) ) {
+			echo 'Error: ' . curl_error( $ch );
 		}
+		curl_close( $ch );
 	}
 }
