@@ -12,7 +12,10 @@
 	"namemsg": "cloudflare",
 	"descriptionmsg": "cloudflare-desc",
 	"requires": {
-		"MediaWiki": ">= 1.35.0"
+		"MediaWiki": ">= 1.35.0",
+		"platform": {
+			"ext-curl": "*"
+		}
 	},
 	"MessagesDirs": {
 		"CloudFlare": [
@@ -24,7 +27,8 @@
 	},
 	"Hooks": {
 		"LocalFilePurgeThumbnails": "purge",
-		"TitleSquidURLs": "purge"
+		"TitleSquidURLs": "purge",
+		"ArticlePurge": "purge"
 	},
 	"HookHandlers": {
 		"purge": {
