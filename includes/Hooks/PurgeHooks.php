@@ -50,7 +50,7 @@ class PurgeHooks implements	LocalFilePurgeThumbnailsHook, TitleSquidURLsHook, Ar
 	 * @param string[] &$urls Array of URLs to purge from the caches, to be manipulated
 	 */
 	public function onTitleSquidURLs( $title, &$urls ): void {
-		if ( !$this->isValid( $title ) ) {
+		if ( !$this->isFile( $title ) ) {
 			return;
 		}
 
@@ -64,15 +64,18 @@ class PurgeHooks implements	LocalFilePurgeThumbnailsHook, TitleSquidURLsHook, Ar
 	 * @return void
 	 */
 	public function onArticlePurge( $wikiPage ): void {
-		if ( !$this->isValid( $wikiPage ) ) {
+		if ( $this->isFile( $wikiPage ) ) {
+			$files = $this->getThumbnails( $wikiPage->getFile() );
+			// Remove mwbackend link
+			array_shift( $files );
+			$urls = $this->linkThumbnails( $files, $wikiPage->getFile() );
+		} elseif ( $wikiPage->getTitle() === null ) {
 			return;
+		} else {
+			$urls = [ $wikiPage->getSourceURL() ];
 		}
 
-		$files = $this->getThumbnails( $wikiPage->getFile() );
-		// Remove mwbackend link
-		array_shift( $files );
-
-		$this->runPurge( $this->linkThumbnails( $files, $wikiPage->getFile() ) );
+		$this->runPurge( $urls );
 	}
 
 	/**
@@ -174,7 +177,7 @@ class PurgeHooks implements	LocalFilePurgeThumbnailsHook, TitleSquidURLsHook, Ar
 	 * @param Article|WikiPage|Title $page
 	 * @return bool
 	 */
-	private function isValid( $page ): bool {
+	private function isFile( $page ): bool {
 		if ( $page instanceof Title ) {
 			return $page->getNamespace() === NS_FILE;
 		}
