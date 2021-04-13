@@ -32,7 +32,10 @@
 	},
 	"HookHandlers": {
 		"purge": {
-			"class": "MediaWiki\\Extension\\CloudFlare\\Hooks\\PurgeHooks"
+			"class": "MediaWiki\\Extension\\CloudFlare\\Hooks\\PurgeHooks",
+			"services": [
+				"MainConfig"
+			]
 		}
 	},
 	"config": {

@@ -12,10 +12,10 @@ declare( strict_types=1 );
 namespace MediaWiki\Extension\CloudFlare\Hooks;
 
 use Article;
+use Config;
 use File;
 use MediaWiki\Hook\LocalFilePurgeThumbnailsHook;
 use MediaWiki\Hook\TitleSquidURLsHook;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\Hook\ArticlePurgeHook;
 use ReflectionException;
 use ReflectionObject;
@@ -24,6 +24,19 @@ use WikiFilePage;
 use WikiPage;
 
 class PurgeHooks implements	LocalFilePurgeThumbnailsHook, TitleSquidURLsHook, ArticlePurgeHook {
+
+	/**
+	 * @var Config
+	 */
+	private $mainConfig;
+
+	/**
+	 * PurgeHooks constructor.
+	 * @param Config $mainConfig
+	 */
+	public function __construct( Config $mainConfig ) {
+		$this->mainConfig = $mainConfig;
+	}
 
 	/**
 	 * Retrieve a list of thumbnail URLs that needs to be purged
@@ -126,8 +139,8 @@ class PurgeHooks implements	LocalFilePurgeThumbnailsHook, TitleSquidURLsHook, Ar
 	 * @return array
 	 */
 	private function linkThumbnails( array $files, File $baseFile ): array {
-		$url = MediaWikiServices::getInstance()->getMainConfig()->get( 'Server' );
-		$uploadPath = MediaWikiServices::getInstance()->getMainConfig()->get( 'UploadPath' );
+		$url = $this->mainConfig->get( 'Server' );
+		$uploadPath = $this->mainConfig->get( 'UploadPath' );
 		$parsed = parse_url( $uploadPath );
 
 		if ( $parsed !== false && isset( $parsed['host'] ) ) {
@@ -169,8 +182,6 @@ class PurgeHooks implements	LocalFilePurgeThumbnailsHook, TitleSquidURLsHook, Ar
 	 * @param array $urls
 	 */
 	private function runPurge( array $urls ): void {
-		MediaWikiServices::getInstance()->getHtmlCacheUpdater()->purgeUrls( $urls );
-
 		( new HookUtils() )->purgeUrls( $urls );
 	}
 
